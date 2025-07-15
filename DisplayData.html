@@ -5,31 +5,33 @@
 </head>
 <body>
   <h1>Book List</h1>
-  <table border="2">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Year</th>
-        <th>Genre</th>
+  <table border="2"> <!--Adds visible border to the table-->
+    <thead> 
+      <tr> <!--Header row of the table-->
+        <th>Title</th> <!--Header for the Title column-->
+        <th>Author</th> <!--Header for the Author column-->
+        <th>Year</th> <!--Header for the Year column-->
+        <th>Genre</th> <!--Header for the Genre column-->
       </tr> 
     </thead>
-    <tbody id="tableContent"></tbody>
+    <tbody id="tableContent"></tbody> <!--Empty table where data will be inserted after parsing JSON data using Javascript-->
   </table>
 
-  <script>
-    fetch('JSONDataStructure.json')
-      .then(response => response.json())
-      .then(JSONDataStructure => {
-        const tableBooks = document.getElementById("tableContent");
-        JSONDataStructure.forEach(book => {
-          const rows = document.createElement("tr");
-          rows.innerHTML = `
+  <script>  // script used to add JavaScript inside the HTM
+    fetch('JSONDataStructure.json') // fetch() function to fetch the JSON file 
+      .then(response => response.json()) // Parse the response as JSON 
+      .then(JSONDataStructure => { // JSONDataStructure is now an array of objects
+        const tableBooks = document.getElementById("tableContent"); // Get the <tbody> where data will be added  
+        JSONDataStructure.forEach(book => { // Looping through each object in the JSON array
+          const rows = document.createElement("tr"); // Creates a new table row 
+          // Using template literals for inserting the data 
+          rows.innerHTML = ` 
             <td>${book.title}</td> 
             <td>${book.author}</td> 
             <td>${book.year}</td> 
             <td>${book.genre}</td> 
           `;
+          // Adds row to the table
           tableBooks.appendChild(rows);
         });
       })

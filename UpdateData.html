@@ -1,0 +1,100 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Update Book Details</title>
+    </head> 
+    <body>
+        <h1>Update a Book</h1> 
+        <!--Update Form--> 
+        <form id="updateForm"> 
+            <!--Input of the existing book title to update--> 
+            <label>Enter Book Title to Update:</label><br> 
+            <input type="text" id="currentTitle"><br> 
+            <!--Input of the new Author-->
+            <label>Enter New Author:</label><br> 
+            <input type="text" id="newAuthor"><br> 
+            <!--Input of the new Year--> 
+            <label>Enter New Year:</label><br> 
+            <input type="text" id="newYear"><br> 
+            <!--Input of the new Genre--> 
+            <label>Enter New Genre:</label><br>
+            <input type="text" id="newGenre"><br>
+            <!--Submit button--> 
+            <button type="submit">Update Your Book</button>
+        </form> 
+        <p id="updateMessage" style="color: red;"></p>
+        <!--Updated Table with new details--> 
+        <h2>Updated Book Details</h2> 
+        <table border="2">
+            <thead>
+                <tr>
+                    <th>Title</th><th>Author</th><th>Year</th><th>Genre</th>
+                </tr> 
+            </thead>  
+            <tbody id="tableContent"></tbody>
+        </table> 
+
+        <script>
+            let books = []; 
+            fetch('JSONDataStructure.json')
+            .then(response => response.json()) 
+            .then(data => {
+                books = data; 
+                displayBooks();
+            });  
+            function displayBooks(){
+                const tableBooks = document.getElementById("tableContent"); 
+                tableBooks.innerHTML = ""; 
+                books.forEach(book => {
+                    const row = document.createElement("tr"); 
+                    row.innerHTML = `
+                        <td>${book.title}</td>  
+                        <td>${book.author}</td> 
+                        <td>${book.year}</td>
+                        <td>${book.genre}</td>
+                    `; 
+                    tableBooks.appendChild(row);
+                });
+            } 
+            
+            document.getElementById("updateForm").addEventListener("submit", function(event) {
+                event.preventDefault(); 
+
+                const currentTitle = document.getElementById("currentTitle").value.trim(); 
+                const updateAuthor = document.getElementById("newAuthor").value.trim(); 
+                const updateYear = document.getElementById("newYear").value.trim(); 
+                const updateGenre = document.getElementById("newGenre").value.trim();  
+                const message = document.getElementById("updateMessage"); 
+
+                if (!currentTitle || !updateAuthor || !updateYear || !updateGenre) {
+                    message.style.color = "red";
+                    message.textContent = "All fields are required.";
+                    return;
+                } 
+
+                if (isNaN(updateYear) || updateYear.length !== 4) {
+                    message.style.color = "red";
+                    message.textContent = "Please enter a valid 4-digit year.";
+                    return;
+                }
+
+                const index = books.findIndex(book => book.title.toLowerCase() === currentTitle.toLowerCase()); 
+                if (index === -1) {
+                    message.style.color = "red";
+                    message.textContent = "Book not found.";
+                    return;
+                }
+
+                books[index].author = updateAuthor;
+                books[index].year = updateYear;
+                books[index].genre = updateGenre; 
+
+                message.style.color = "green";
+                message.textContent = "Book updated successfully.";
+
+                displayBooks(); 
+                this.reset(); // clears the form 
+            });
+        </script>
+    </body>
+</html>
