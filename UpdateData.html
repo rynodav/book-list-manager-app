@@ -22,7 +22,9 @@
             <!--Submit button--> 
             <button type="submit">Update Your Book</button>
         </form> 
-        <p id="updateMessage" style="color: red;"></p>
+
+        <p id="updateMessage" style="color: red;"></p>  <!--Feedback message-->
+
         <!--Updated Table with new details--> 
         <h2>Updated Book Details</h2> 
         <table border="2">
@@ -31,21 +33,23 @@
                     <th>Title</th><th>Author</th><th>Year</th><th>Genre</th>
                 </tr> 
             </thead>  
-            <tbody id="tableContent"></tbody>
+            <tbody id="tableContent"></tbody> <!--Table body for the displayed books-->
         </table> 
 
         <script>
-            let books = []; 
-            fetch('JSONDataStructure.json')
-            .then(response => response.json()) 
-            .then(data => {
-                books = data; 
-                displayBooks();
+            let books = []; // array holds the book list loaded from the JSON file  
+
+            fetch('JSONDataStructure.json') // fetches book data from the JSON file 
+            .then(response => response.json()) // convert response to JSON format 
+            .then(data => { 
+                books = data; // stores the loaded book list in the books array 
+                displayBooks(); // displays the books in the table body 
             });  
-            function displayBooks(){
+
+            function displayBooks(){ // function to render books into the table body 
                 const tableBooks = document.getElementById("tableContent"); 
-                tableBooks.innerHTML = ""; 
-                books.forEach(book => {
+                tableBooks.innerHTML = "";  // clears the table before adding the updated rows
+                books.forEach(book => { 
                     const row = document.createElement("tr"); 
                     row.innerHTML = `
                         <td>${book.title}</td>  
@@ -53,47 +57,50 @@
                         <td>${book.year}</td>
                         <td>${book.genre}</td>
                     `; 
-                    tableBooks.appendChild(row);
+                    tableBooks.appendChild(row); // add row to the table 
                 });
             } 
             
-            document.getElementById("updateForm").addEventListener("submit", function(event) {
-                event.preventDefault(); 
+            document.getElementById("updateForm").addEventListener("submit", function(event) { // form to handle submission 
+                event.preventDefault(); // prevents the page from refreshing 
 
                 const currentTitle = document.getElementById("currentTitle").value.trim(); 
                 const updateAuthor = document.getElementById("newAuthor").value.trim(); 
                 const updateYear = document.getElementById("newYear").value.trim(); 
                 const updateGenre = document.getElementById("newGenre").value.trim();  
-                const message = document.getElementById("updateMessage"); 
 
-                if (!currentTitle || !updateAuthor || !updateYear || !updateGenre) {
+                const message = document.getElementById("updateMessage"); // feedback message element 
+
+                // ensuring no fields are left blank 
+                if (!currentTitle || !updateAuthor || !updateYear || !updateGenre) { 
                     message.style.color = "red";
                     message.textContent = "All fields are required.";
                     return;
                 } 
-
+                // ensuring year number must 4-digit number 
                 if (isNaN(updateYear) || updateYear.length !== 4) {
                     message.style.color = "red";
-                    message.textContent = "Please enter a valid 4-digit year.";
+                    message.textContent = "Please enter a valid 4-digit number!";
                     return;
                 }
 
+                // finding the index of the book to update 
                 const index = books.findIndex(book => book.title.toLowerCase() === currentTitle.toLowerCase()); 
                 if (index === -1) {
                     message.style.color = "red";
                     message.textContent = "Book not found.";
                     return;
                 }
-
+                // update the book's details in the array 
                 books[index].author = updateAuthor;
                 books[index].year = updateYear;
                 books[index].genre = updateGenre; 
-
+                // displaying success message 
                 message.style.color = "green";
                 message.textContent = "Book updated successfully.";
 
-                displayBooks(); 
-                this.reset(); // clears the form 
+                displayBooks(); // refresh to display the updated details 
+                this.reset(); // clears the form fields after the update 
             });
         </script>
     </body>

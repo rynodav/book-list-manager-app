@@ -1,0 +1,84 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Remove Book Feature</title>
+    </head> 
+    <body>
+        <h1>Remove a Book</h1> 
+        <!--Input form for the book title removal-->
+        <form id="removeBookForm">
+            <label>Enter Book Title to Remove:</label><br> 
+            <input type="text" id="removeBookTitle"><br> 
+            <button type="submit">Remove Book</button>
+        </form>  
+        <!--Paragraph to display error or success notification-->
+        <p id="removeNotification" style="color: red,"></p> 
+        
+        <h2>Updated Book List</h2> 
+        <!--Table display after book removal-->
+        <table border="2">
+            <thead>
+                <tr>
+                    <th>Title</th><th>Author</th><th>Year</th><th>Genre</th>
+                </tr>
+            </thead> 
+            <tbody id="tableBody"></tbody>
+        </table> 
+
+        <script>
+            let books = []; 
+
+            fetch('JSONDataStructure.json') 
+                .then(response => response.json()) 
+                .then(data => {
+                    books = data; 
+                    displayBooks();
+                });  
+
+            function displayBooks() {
+                const tableBooks = document.getElementById("tableBody"); 
+                tableBooks.innerHTML = "";
+                books.forEach(book => {
+                    const row = document.createElement("tr"); 
+                    row.innerHTML = `
+                        <td>${book.title}</td> 
+                        <td>${book.author}</td>
+                        <td>${book.year}</td>
+                        <td>${book.genre}</td>
+                    `; 
+                    tableBooks.appendChild(row); 
+                }); 
+            } 
+
+            document.getElementById("removeBookForm").addEventListener("submit", function (event) {
+                event.preventDefault(); 
+
+                const removeBookTitle = document.getElementById("removeBookTitle"); 
+                const notification = document.getElementById("removeNotification");  
+                const bookTitle = removeBookTitle.value.trim(); 
+
+                // ensures user provides a title
+                if (!bookTitle){
+                    notification.style.color = "red"; 
+                    notification.textContent = "Please enter a title!"; 
+                    return;
+                } 
+            
+                const index = books.findIndex(book => book.title.toLowerCase() === bookTitle.toLowerCase()); 
+                if (index === -1){
+                    notification.style.color = "red"; 
+                    notification.textContent = "Unfornutely, Your Book Is Not Found! Please Re-Enter The Correct Book Title"; 
+                    return; 
+                } 
+                
+                books.splice(index, 1); // Remove book from the array
+                displayBooks(); // update table after the removal 
+
+                notification.style.color = "green"; 
+                notification.textContent = "Your Selected Book Has Been Successfully Removed!";
+
+                this.reset();
+            }); 
+        </script>
+    </body>
+</html>
